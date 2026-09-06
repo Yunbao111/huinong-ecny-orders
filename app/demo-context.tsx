@@ -100,56 +100,65 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...state, notice: '' }));
   }, [restored, state]);
 
+  function persistState(nextState: DemoState) {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...nextState, notice: '' }));
+    setState(nextState);
+  }
+
   function setRole(role: Role) {
-    setState((current) => ({ ...current, role, notice: `已切换为：${roles[role]}` }));
+    persistState({ ...state, role, notice: `已切换为：${roles[role]}` });
   }
 
   function recordDelivery() {
     if (state.role !== 'farmer' || state.fulfillment !== 'accepted') return false;
-    setState((current) => ({ ...current, fulfillment: 'delivered', notice: '交货登记成功，订单正在等待验收员验收。' }));
+    persistState({ ...state, fulfillment: 'delivered', notice: '交货登记成功，订单正在等待验收员验收。' });
     return true;
   }
 
   function finishSimulatedPayment() {
     window.setTimeout(() => {
-      setState((current) => current.payment === 'processing'
-        ? { ...current, fulfillment: 'completed', payment: 'paid', notice: '仿真付款完成：10,140.00 元已记入农户虚拟钱包。' }
-        : current);
+      setState((current) => {
+        const nextState = current.payment === 'processing'
+          ? { ...current, fulfillment: 'completed' as const, payment: 'paid' as const, notice: '仿真付款完成：10,140.00 元已记入农户虚拟钱包。' }
+          : current;
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...nextState, notice: '' }));
+        return nextState;
+      });
     }, 900);
   }
 
   function passInspection() {
     if (state.role !== 'inspector' || state.fulfillment !== 'delivered' || state.payment !== 'not_due') return false;
-    setState((current) => ({ ...current, fulfillment: 'inspection_passed', payment: 'processing', notice: '验收通过，平台正在调用数字人民币仿真支付网关。' }));
+    persistState({ ...state, fulfillment: 'inspection_passed', payment: 'processing', notice: '验收通过，平台正在调用数字人民币仿真支付网关。' });
     finishSimulatedPayment();
     return true;
   }
 
   function retryPayment() {
     if (state.role !== 'admin' || state.fulfillment !== 'inspection_passed' || state.payment !== 'retry_pending') return false;
-    setState((current) => ({ ...current, payment: 'processing', notice: '正在按原付款义务重试，不会新建第二笔付款。' }));
+    persistState({ ...state, payment: 'processing', notice: '正在按原付款义务重试，不会新建第二笔付款。' });
     finishSimulatedPayment();
     return true;
   }
 
   function recordOfflineReceipt() {
     if (state.offlineReceipt !== 'none') return false;
-    setState((current) => ({ ...current, offlineReceipt: 'queued', notice: '离线记录已保存在本机，尚未完成到账核验。' }));
+    persistState({ ...state, offlineReceipt: 'queued', notice: '离线记录已保存在本机，尚未完成到账核验。' });
     return true;
   }
 
   function syncOfflineReceipt() {
     if (state.offlineReceipt !== 'queued') return false;
-    setState((current) => ({ ...current, offlineReceipt: 'synced', notice: '离线记录已完成仿真同步核验。' }));
+    persistState({ ...state, offlineReceipt: 'synced', notice: '离线记录已完成仿真同步核验。' });
     return true;
   }
 
   function resetOfflineReceipt() {
-    setState((current) => ({ ...current, offlineReceipt: 'none', notice: '硬钱包演示已重置。' }));
+    persistState({ ...state, offlineReceipt: 'none', notice: '硬钱包演示已重置。' });
   }
 
   function resetDemo() {
-    setState((current) => ({ ...DEFAULT_STATE, role: current.role, notice: '订单和钱包演示数据已重置。' }));
+    persistState({ ...DEFAULT_STATE, role: state.role, notice: '订单和钱包演示数据已重置。' });
   }
 
   useEffect(() => {
@@ -178,12 +187,12 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
       annotations: { readOnlyHint: false, untrustedContentHint: false },
       execute: () => {
         if (state.role !== 'farmer' || state.fulfillment !== 'accepted') throw new Error('当前身份或订单状态不能登记交货');
-        setState((current) => ({ ...current, fulfillment: 'delivered', notice: '交货登记成功，订单正在等待验收员验收。' }));
+        persistState({ ...state, fulfillment: 'delivered', notice: '交货登记成功，订单正在等待验收员验收。' });
         return { orderId: 'HN20260906001', fulfillment: 'delivered' };
       },
     });
     return () => lifecycle.abort();
-  }, [state.fulfillment, state.payment, state.role]);
+  }, [state]);
 
   const value: DemoContextValue = {
     ...state,

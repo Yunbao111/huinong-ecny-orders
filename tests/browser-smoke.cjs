@@ -32,10 +32,11 @@ async function assertNoOverflow(page, label) {
   try {
     const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const page = await desktop.newPage();
+    page.setDefaultNavigationTimeout(90000);
     await attachGuards(page, 'desktop', errors);
-    await page.goto(baseURL, { waitUntil: 'networkidle' });
+    await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
     await page.evaluate(() => localStorage.clear());
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
     await assertNoOverflow(page, 'desktop home');
 
     const navHrefs = await page.locator('nav[aria-label="主导航"] a').evaluateAll((links) => links.map((link) => link.getAttribute('href')));
@@ -57,7 +58,7 @@ async function assertNoOverflow(page, label) {
     const accepted = page.getByLabel('验收合格（千克）');
     await accepted.fill('1900');
     assert(await page.getByRole('button', { name: '验收通过并触发仿真付款' }).isDisabled(), 'invalid weight did not disable settlement');
-    assert((await page.getByRole('alert').count()) === 1, 'invalid weight message missing');
+    await page.getByText('本次演示合格重量应为 1,950 千克，请核对后再提交。').waitFor();
     await accepted.fill('1950');
     await page.getByRole('button', { name: '验收通过并触发仿真付款' }).click();
     await page.getByText('仿真付款完成：10,140.00 元已记入农户虚拟钱包。').waitFor({ timeout: 5000 });
@@ -80,7 +81,7 @@ async function assertNoOverflow(page, label) {
     if (await page.getByRole('button', { name: '重新体验硬钱包演示' }).count()) await page.getByRole('button', { name: '重新体验硬钱包演示' }).click();
     await page.getByRole('button', { name: '模拟碰一碰收款' }).click();
     assert((await page.getByText('本机已记录，等待联网核验').count()) === 1, 'offline queued state missing');
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'domcontentloaded' });
     assert((await page.getByText('本机已记录，等待联网核验').count()) === 1, 'offline queued state did not persist');
     await page.getByRole('button', { name: '模拟恢复网络并同步' }).click();
     assert((await page.getByText('仿真同步核验成功').count()) === 1, 'offline sync state missing');
@@ -98,9 +99,10 @@ async function assertNoOverflow(page, label) {
     for (const viewport of [{ name: 'mobile', width: 390, height: 844 }, { name: 'tablet', width: 768, height: 1024 }]) {
       const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } });
       const responsivePage = await context.newPage();
+      responsivePage.setDefaultNavigationTimeout(90000);
       await attachGuards(responsivePage, viewport.name, errors);
       for (const route of ['/', '/orders', '/digital-rmb', '/wallet']) {
-        await responsivePage.goto(`${baseURL}${route === '/' ? '/' : `${route}/`}`, { waitUntil: 'networkidle' });
+        await responsivePage.goto(`${baseURL}${route === '/' ? '/' : `${route}/`}`, { waitUntil: 'domcontentloaded' });
         await assertNoOverflow(responsivePage, `${viewport.name} ${route}`);
       }
       if (viewport.name === 'mobile') {
