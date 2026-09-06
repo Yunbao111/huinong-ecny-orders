@@ -1,13 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 import { ArrowRight, Banknote, BookOpenCheck, Check, Fingerprint, Landmark, Link2, Network, ShieldCheck, Smartphone, WalletCards, WifiOff } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { SafeLink } from '../safe-link';
 
 type Scene = 'mountain' | 'settlement' | 'privacy';
 
@@ -90,7 +90,7 @@ export default function DigitalRmbPage() {
 
         <section className="mb-2 grid gap-5 rounded-[26px] border border-red-100 bg-red-50 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div><p className="text-sm font-black tracking-[.12em] text-red-700">接着亲手试一试</p><h2 className="mt-2 text-2xl font-black">去钱包页体验“虚拟硬钱包离线收款”</h2><p className="mt-3 text-base leading-7 text-slate-600">你会看到离线记录为什么不能直接等同于最终到账，以及恢复网络后为什么还要同步核验。</p></div>
-          <Link href="/wallet#hard-wallet" className="primary-link bg-red-700 hover:bg-red-600">进入硬钱包演示 <ArrowRight /></Link>
+          <SafeLink href="/wallet#hard-wallet" className="primary-link bg-red-700 hover:bg-red-600">进入硬钱包演示 <ArrowRight /></SafeLink>
         </section>
 
         <section className="mt-8 rounded-[22px] bg-white p-6 ring-1 ring-emerald-950/8">

@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
 import { ArrowRight, BadgeCheck, Clock3, CreditCard, FileCheck2, HandCoins, Info, RefreshCw, ShieldCheck, WalletCards, Wifi, WifiOff } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatMoney, useDemo } from '../demo-context';
+import { SafeLink } from '../safe-link';
 
 export default function WalletPage() {
   const { payment, paymentFen, walletFen, offlineReceipt, recordOfflineReceipt, syncOfflineReceipt, resetOfflineReceipt } = useDemo();
@@ -30,7 +30,7 @@ export default function WalletPage() {
             {payment === 'paid' ? (
               <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5"><div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start"><div><p className="text-lg font-black">红富士苹果订单收款</p><p className="mt-1 text-sm text-slate-500">订单 HN20260906001・仿真交易 ECNY-DEMO-001</p></div><p className="text-2xl font-black text-emerald-700">+{formatMoney(paymentFen)}</p></div><div className="mt-4 grid gap-3 border-t border-emerald-100 pt-4 sm:grid-cols-3"><WalletFact label="付款状态" value="仿真支付完成" /><WalletFact label="合格重量" value="1,950 千克" /><WalletFact label="结算单价" value="5.20 元/千克" /></div></div>
             ) : (
-              <div className="rounded-2xl border-2 border-dashed border-slate-200 p-6 text-center"><Clock3 className="mx-auto size-9 text-slate-400" /><p className="mt-3 text-lg font-black">苹果订单货款尚未进入钱包</p><p className="mt-2 text-base leading-7 text-slate-500">先由农户登记交货，再由验收员确认合格重量，平台才会触发仿真付款。</p><Link href="/orders" className="mt-4 inline-flex min-h-11 items-center gap-2 font-black text-[var(--leaf)] underline underline-offset-4">去办理订单 <ArrowRight className="size-5" /></Link></div>
+              <div className="rounded-2xl border-2 border-dashed border-slate-200 p-6 text-center"><Clock3 className="mx-auto size-9 text-slate-400" /><p className="mt-3 text-lg font-black">苹果订单货款尚未进入钱包</p><p className="mt-2 text-base leading-7 text-slate-500">先由农户登记交货，再由验收员确认合格重量，平台才会触发仿真付款。</p><SafeLink href="/orders" className="mt-4 inline-flex min-h-11 items-center gap-2 font-black text-[var(--leaf)] underline underline-offset-4">去办理订单 <ArrowRight className="size-5" /></SafeLink></div>
             )}
             <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-50 p-4"><div><p className="font-black">演示期初余额</p><p className="mt-1 text-sm text-slate-500">本机初始化的虚拟余额</p></div><p className="text-lg font-black">{formatMoney(2_865_000)}</p></div>
           </CardContent>

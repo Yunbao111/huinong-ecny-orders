@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { BadgeCheck, Home, Landmark, ReceiptText, UserRound, WalletCards, Wheat, X } from 'lucide-react';
@@ -8,6 +7,7 @@ import { BadgeCheck, Home, Landmark, ReceiptText, UserRound, WalletCards, Wheat,
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Role, roles, useDemo } from './demo-context';
+import { SafeLink } from './safe-link';
 
 const navigation = [
   { href: '/', label: '首页', icon: Home },
@@ -47,10 +47,10 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[var(--page-bg)] text-[var(--ink)]">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[var(--forest)] text-white shadow-sm">
         <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex min-w-0 items-center gap-3 rounded-xl focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-amber-300">
+          <SafeLink href="/" className="flex min-w-0 items-center gap-3 rounded-xl focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-amber-300">
             <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[var(--harvest)] text-[var(--forest)] shadow-[inset_0_0_0_1px_rgb(255_255_255/35%)]"><Wheat className="size-6" strokeWidth={2.4} /></span>
             <span className="min-w-0"><strong className="block truncate text-lg font-extrabold tracking-wide sm:text-xl">惠农数币订单平台</strong><small className="hidden text-sm text-emerald-100 sm:block">订单稳稳当当，数币明明白白</small></span>
-          </Link>
+          </SafeLink>
 
           <div ref={menuRef} className="relative flex items-center gap-2">
             <Badge className="hidden h-8 border border-red-200/30 bg-red-500/20 px-3 text-sm text-red-50 md:inline-flex">数字人民币仿真演示</Badge>
@@ -89,7 +89,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
       <nav className="hidden border-b border-emerald-950/8 bg-white lg:block" aria-label="主导航">
         <div className="mx-auto flex h-14 max-w-7xl items-center gap-9 px-8 text-base font-semibold">
-          {navigation.map(({ href, label, icon: Icon }) => <Link key={href} onClick={() => setRoleMenuOpen(false)} className={`nav-link ${pathname === href ? 'nav-link-active' : ''}`} href={href}><Icon />{label === '订单' ? '我的订单' : label === '数币' ? '认识数币' : label === '钱包' ? '数币钱包' : label}</Link>)}
+          {navigation.map(({ href, label, icon: Icon }) => <SafeLink key={href} onClick={() => setRoleMenuOpen(false)} className={`nav-link ${pathname === href ? 'nav-link-active' : ''}`} href={href}><Icon />{label === '订单' ? '我的订单' : label === '数币' ? '认识数币' : label === '钱包' ? '数币钱包' : label}</SafeLink>)}
         </div>
       </nav>
 
@@ -98,7 +98,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       {children}
 
       <nav className="mobile-nav lg:hidden" aria-label="手机主导航">
-        {navigation.map(({ href, label, icon: Icon }) => <Link key={href} onClick={() => setRoleMenuOpen(false)} className={pathname === href ? 'active' : ''} href={href}><Icon />{label}</Link>)}
+        {navigation.map(({ href, label, icon: Icon }) => <SafeLink key={href} onClick={() => setRoleMenuOpen(false)} className={pathname === href ? 'active' : ''} href={href}><Icon />{label}</SafeLink>)}
       </nav>
     </div>
   );

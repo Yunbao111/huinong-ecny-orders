@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import { ArrowRight, BadgeCheck, ClipboardCheck, Clock3, RefreshCw, ShieldCheck, UserRound, WalletCards } from 'lucide-react';
 
@@ -11,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { formatMoney, roles, useDemo } from '../demo-context';
+import { SafeLink } from '../safe-link';
 
 type Panel = 'delivery' | 'inspection' | null;
 
@@ -74,7 +74,7 @@ export default function OrdersPage() {
         </div>
 
         <aside className="space-y-5">
-          <Card className="rounded-[22px] border-0 bg-[var(--forest)] text-white ring-0"><CardHeader><CardDescription className="text-base text-emerald-100">为什么验收后才付款？</CardDescription><CardTitle className="mt-2 text-xl font-black">先确认农货，再触发数币仿真付款</CardTitle></CardHeader><CardContent><p className="text-base leading-7 text-emerald-50">平台规则把付款义务与合格重量对应起来，避免未验收就付款，也让农户看清计算依据。</p><Link href="/digital-rmb#platform-fit" className="mt-4 inline-flex items-center gap-2 font-black text-amber-200 underline underline-offset-4">了解数币如何赋能 <ArrowRight className="size-5" /></Link></CardContent></Card>
+          <Card className="rounded-[22px] border-0 bg-[var(--forest)] text-white ring-0"><CardHeader><CardDescription className="text-base text-emerald-100">为什么验收后才付款？</CardDescription><CardTitle className="mt-2 text-xl font-black">先确认农货，再触发数币仿真付款</CardTitle></CardHeader><CardContent><p className="text-base leading-7 text-emerald-50">平台规则把付款义务与合格重量对应起来，避免未验收就付款，也让农户看清计算依据。</p><SafeLink href="/digital-rmb#platform-fit" className="mt-4 inline-flex items-center gap-2 font-black text-amber-200 underline underline-offset-4">了解数币如何赋能 <ArrowRight className="size-5" /></SafeLink></CardContent></Card>
           <Card className="rounded-[22px] border-0 bg-white ring-1 ring-emerald-950/8"><CardHeader><CardTitle className="flex items-center gap-2 text-xl font-black"><Clock3 className="size-6 text-[var(--leaf)]" />办理记录</CardTitle></CardHeader><CardContent className="space-y-4"><AuditRow done title="农户接受订单" detail="2026年8月20日・条款冻结" /><AuditRow done={fulfillment !== 'accepted'} title="农户登记交货" detail={fulfillment === 'accepted' ? '尚未办理' : '1,980 千克'} /><AuditRow done={currentIndex >= 3} title="验收员确认合格量" detail={currentIndex >= 3 ? '合格 1,950 千克' : '尚未办理'} /><AuditRow done={payment === 'paid'} title="仿真付款记录" detail={payment === 'paid' ? '10,140.00 元' : payment === 'processing' ? '正在处理' : payment === 'retry_pending' ? '等待管理员重试' : '尚未触发'} /></CardContent></Card>
           {role === 'admin' && <Button type="button" variant="outline" onClick={resetDemo} className="h-12 w-full rounded-xl text-base font-black"><RefreshCw />重置完整演示</Button>}
         </aside>
@@ -84,7 +84,7 @@ export default function OrdersPage() {
 }
 
 function OrderAction({ role, fulfillment, payment, onDelivery, onInspection, onRetry }: { role: string; fulfillment: string; payment: string; onDelivery: () => void; onInspection: () => void; onRetry: () => boolean }) {
-  return <div className="mt-7 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between"><p className="flex items-center gap-2 text-base font-semibold text-slate-600"><ShieldCheck className="size-5 text-[var(--leaf)]" />系统只允许当前负责身份办理下一步</p><div>{fulfillment === 'accepted' && role === 'farmer' && <Button type="button" onClick={onDelivery} className="h-12 rounded-xl px-6 text-base font-extrabold">登记交货 <ArrowRight /></Button>}{fulfillment === 'accepted' && role !== 'farmer' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold" variant="secondary">等待农户登记交货</Button>}{fulfillment === 'delivered' && role === 'inspector' && <Button type="button" onClick={onInspection} className="h-12 rounded-xl bg-amber-400 px-6 text-base font-extrabold text-emerald-950 hover:bg-amber-300">开始现场验收 <ArrowRight /></Button>}{fulfillment === 'delivered' && role !== 'inspector' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold" variant="secondary">等待验收员操作</Button>}{payment === 'processing' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold"><RefreshCw className="animate-spin" />仿真付款处理中</Button>}{payment === 'retry_pending' && role === 'admin' && <Button type="button" onClick={onRetry} className="h-12 rounded-xl px-6 text-base font-extrabold"><RefreshCw />按原付款单重试</Button>}{payment === 'retry_pending' && role !== 'admin' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold" variant="secondary">等待管理员重试</Button>}{payment === 'paid' && <Link href="/wallet" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[var(--leaf)] px-6 text-base font-black text-white">查看仿真收款 <WalletCards className="size-5" /></Link>}</div></div>;
+  return <div className="mt-7 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between"><p className="flex items-center gap-2 text-base font-semibold text-slate-600"><ShieldCheck className="size-5 text-[var(--leaf)]" />系统只允许当前负责身份办理下一步</p><div>{fulfillment === 'accepted' && role === 'farmer' && <Button type="button" onClick={onDelivery} className="h-12 rounded-xl px-6 text-base font-extrabold">登记交货 <ArrowRight /></Button>}{fulfillment === 'accepted' && role !== 'farmer' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold" variant="secondary">等待农户登记交货</Button>}{fulfillment === 'delivered' && role === 'inspector' && <Button type="button" onClick={onInspection} className="h-12 rounded-xl bg-amber-400 px-6 text-base font-extrabold text-emerald-950 hover:bg-amber-300">开始现场验收 <ArrowRight /></Button>}{fulfillment === 'delivered' && role !== 'inspector' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold" variant="secondary">等待验收员操作</Button>}{payment === 'processing' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold"><RefreshCw className="animate-spin" />仿真付款处理中</Button>}{payment === 'retry_pending' && role === 'admin' && <Button type="button" onClick={onRetry} className="h-12 rounded-xl px-6 text-base font-extrabold"><RefreshCw />按原付款单重试</Button>}{payment === 'retry_pending' && role !== 'admin' && <Button disabled className="h-12 rounded-xl px-6 text-base font-extrabold" variant="secondary">等待管理员重试</Button>}{payment === 'paid' && <SafeLink href="/wallet" className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-[var(--leaf)] px-6 text-base font-black text-white">查看仿真收款 <WalletCards className="size-5" /></SafeLink>}</div></div>;
 }
 
 function OrderFact({ label, value }: { label: string; value: string }) {

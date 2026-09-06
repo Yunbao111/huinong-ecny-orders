@@ -76,7 +76,7 @@ async function assertNoOverflow(page, label) {
 
     await page.getByRole('link', { name: '数币钱包' }).click();
     await page.waitForURL('**/wallet');
-    assert((await page.getByText('¥38,790.00').count()) >= 1, 'wallet balance did not include simulated payment');
+    await page.getByText('¥38,790.00').first().waitFor({ timeout: 5000 });
     if (await page.getByRole('button', { name: '重新体验硬钱包演示' }).count()) await page.getByRole('button', { name: '重新体验硬钱包演示' }).click();
     await page.getByRole('button', { name: '模拟碰一碰收款' }).click();
     assert((await page.getByText('本机已记录，等待联网核验').count()) === 1, 'offline queued state missing');
