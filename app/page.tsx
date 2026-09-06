@@ -5,6 +5,7 @@ import { ArrowRight, CircleHelp, Landmark, PackageCheck, ShieldCheck, Sprout, Wa
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { withBasePath } from './base-path';
 import { formatMoney, useDemo } from './demo-context';
 import { SafeLink } from './safe-link';
 
@@ -21,7 +22,7 @@ export default function HomePage() {
   return (
     <main className="mx-auto max-w-7xl px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pb-12">
       <section className="hero-panel relative min-h-[390px] overflow-hidden rounded-[28px] bg-[var(--forest)] text-white shadow-[0_20px_60px_rgb(8_52_38/18%)] sm:min-h-[430px]">
-        <Image src="/images/orchard-ecny-hero.png" alt="果园里的农户正在向验收人员交付苹果" fill priority sizes="(max-width: 768px) 100vw, 1200px" className="object-cover object-[68%_center]" />
+        <Image src={withBasePath('/images/orchard-ecny-hero.png')} alt="果园里的农户正在向验收人员交付苹果" fill priority sizes="(max-width: 768px) 100vw, 1200px" className="object-cover object-[68%_center]" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(6,48,34,.97)_0%,rgba(6,48,34,.9)_38%,rgba(6,48,34,.28)_72%,rgba(6,48,34,.08)_100%)]" />
         <div className="relative flex min-h-[390px] max-w-2xl flex-col justify-center p-6 sm:min-h-[430px] sm:p-10 lg:p-14">
           <Badge className="mb-5 h-8 w-fit border border-amber-200/30 bg-amber-300/18 px-3 text-sm font-bold text-amber-100"><Sprout className="size-4" /> 数字人民币赋能订单农业</Badge>
@@ -65,7 +66,7 @@ export default function HomePage() {
 
       <section className="mt-10 overflow-hidden rounded-[28px] bg-white ring-1 ring-emerald-950/8">
         <div className="grid lg:grid-cols-[.9fr_1.1fr]">
-          <div className="relative min-h-[310px]"><Image src="/images/mountain-hard-wallet.png" alt="山区老年农户使用卡片形态的虚拟硬钱包演示收款" fill sizes="(max-width: 1024px) 100vw, 520px" className="object-cover" /></div>
+          <div className="relative min-h-[310px]"><Image src={withBasePath('/images/mountain-hard-wallet.png')} alt="山区老年农户使用卡片形态的虚拟硬钱包演示收款" fill sizes="(max-width: 1024px) 100vw, 520px" className="object-cover" /></div>
           <div className="p-6 sm:p-9 lg:p-11"><p className="section-kicker">山区助农场景</p><h2 className="text-3xl font-black leading-tight">没有智能手机，也能学习硬钱包收款</h2><p className="mt-4 text-lg leading-8 text-slate-600">官方资料介绍了卡片等硬钱包形态和离线交易能力。本平台用虚拟卡片演示山区无网场景：现场先记录，恢复网络后再同步核验。</p><div className="mt-5 flex flex-wrap gap-3"><SafeLink href="/wallet#hard-wallet" className="primary-link"><WifiOff className="size-5" />体验硬钱包演示</SafeLink><SafeLink href="/digital-rmb" className="plain-link"><CircleHelp className="size-5" />先了解原理</SafeLink></div></div>
         </div>
       </section>

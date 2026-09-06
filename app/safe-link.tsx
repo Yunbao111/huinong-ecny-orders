@@ -10,7 +10,7 @@ export function SafeLink({ href, onClick, ...props }: SafeLinkProps) {
     onClick?.(event);
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
-    window.location.assign(typeof href === 'string' ? href : href.pathname ?? '/');
+    window.location.assign(event.currentTarget.href);
   }
 
   return <Link {...props} href={href} prefetch={false} onClick={navigateWithReload} />;

@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { withBasePath } from '../base-path';
 import { formatMoney, roles, useDemo } from '../demo-context';
 import { SafeLink } from '../safe-link';
 
@@ -52,7 +53,7 @@ export default function OrdersPage() {
           <Card className="order-card gap-0 overflow-hidden rounded-[26px] border-0 py-0 shadow-[0_12px_36px_rgb(23_74_52/10%)] ring-1 ring-emerald-950/8">
             <div className="grid lg:grid-cols-[290px_1fr]">
               <div className="relative min-h-[250px] overflow-hidden lg:min-h-full">
-                <Image src="/images/fuji-apples.png" alt="装在绿色筐中的新鲜红富士苹果" fill priority sizes="(max-width: 1024px) 100vw, 290px" className="object-cover" />
+                <Image src={withBasePath('/images/fuji-apples.png')} alt="装在绿色筐中的新鲜红富士苹果" fill priority sizes="(max-width: 1024px) 100vw, 290px" className="object-cover" />
                 <Badge className="absolute left-4 top-4 h-9 bg-white px-4 text-base font-black text-[var(--leaf)] shadow-md">{status}</Badge>
               </div>
               <div className="p-5 sm:p-7">

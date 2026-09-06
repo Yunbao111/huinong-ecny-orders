@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
 
-const baseURL = 'http://localhost:3000';
+const baseURL = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 const artifacts = path.join(__dirname, '..', 'test-artifacts');
 fs.mkdirSync(artifacts, { recursive: true });
@@ -39,14 +39,14 @@ async function assertNoOverflow(page, label) {
     await assertNoOverflow(page, 'desktop home');
 
     const navHrefs = await page.locator('nav[aria-label="主导航"] a').evaluateAll((links) => links.map((link) => link.getAttribute('href')));
-    assert(JSON.stringify(navHrefs) === JSON.stringify(['/', '/orders', '/digital-rmb', '/wallet']), `desktop navigation is not four real routes: ${navHrefs}`);
+    assert(navHrefs.length === 4 && navHrefs.every((href, index) => href.endsWith(['/', '/orders/', '/digital-rmb/', '/wallet/'][index])), `desktop navigation is not four real routes: ${navHrefs}`);
 
     await page.getByRole('button', { name: /身份|李建国/ }).click();
     await page.getByRole('menuitemradio', { name: /李建国/ }).click();
     assert((await page.getByText('已切换为：李建国・农户').count()) === 1, 'role switch did not produce visible confirmation');
 
     await page.getByRole('link', { name: '我的订单' }).click();
-    await page.waitForURL('**/orders');
+    await page.waitForURL('**/orders/');
     await page.getByRole('button', { name: '登记交货' }).click();
     await page.getByRole('button', { name: '信息无误，确认交货' }).click();
     assert((await page.getByText('交货登记成功，订单正在等待验收员验收。').count()) === 1, 'delivery confirmation missing');
@@ -66,7 +66,7 @@ async function assertNoOverflow(page, label) {
     await page.screenshot({ path: path.join(artifacts, 'orders-desktop.png'), fullPage: true });
 
     await page.getByRole('link', { name: '认识数币' }).click();
-    await page.waitForURL('**/digital-rmb');
+    await page.waitForURL('**/digital-rmb/');
     await page.getByRole('button', { name: '验收接付款' }).click();
     assert((await page.getByText('交货后担心货款迟迟不到').count()) === 1, 'settlement education scene did not update');
     await page.getByRole('button', { name: '少暴露信息' }).click();
@@ -75,7 +75,7 @@ async function assertNoOverflow(page, label) {
     await page.screenshot({ path: path.join(artifacts, 'digital-rmb-desktop.png'), fullPage: true });
 
     await page.getByRole('link', { name: '数币钱包' }).click();
-    await page.waitForURL('**/wallet');
+    await page.waitForURL('**/wallet/');
     await page.getByText('¥38,790.00').first().waitFor({ timeout: 5000 });
     if (await page.getByRole('button', { name: '重新体验硬钱包演示' }).count()) await page.getByRole('button', { name: '重新体验硬钱包演示' }).click();
     await page.getByRole('button', { name: '模拟碰一碰收款' }).click();
@@ -100,7 +100,7 @@ async function assertNoOverflow(page, label) {
       const responsivePage = await context.newPage();
       await attachGuards(responsivePage, viewport.name, errors);
       for (const route of ['/', '/orders', '/digital-rmb', '/wallet']) {
-        await responsivePage.goto(`${baseURL}${route}`, { waitUntil: 'networkidle' });
+        await responsivePage.goto(`${baseURL}${route === '/' ? '/' : `${route}/`}`, { waitUntil: 'networkidle' });
         await assertNoOverflow(responsivePage, `${viewport.name} ${route}`);
       }
       if (viewport.name === 'mobile') {

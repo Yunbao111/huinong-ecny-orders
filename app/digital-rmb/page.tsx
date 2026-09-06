@@ -7,6 +7,7 @@ import { ArrowRight, Banknote, BookOpenCheck, Check, Fingerprint, Landmark, Link
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { withBasePath } from '../base-path';
 import { SafeLink } from '../safe-link';
 
 type Scene = 'mountain' | 'settlement' | 'privacy';
@@ -46,7 +47,7 @@ export default function DigitalRmbPage() {
             <p className="mt-5 max-w-2xl text-lg leading-8 text-red-50">数字人民币是中国人民银行发行的数字形式法定货币；常用移动支付平台主要是支付工具。对农户来说，两者日常都能方便付款，但底层身份、钱包关系和特殊场景能力并不相同。</p>
             <p className="mt-5 flex max-w-2xl items-start gap-2 rounded-2xl border border-white/15 bg-black/10 p-4 text-sm leading-6 text-red-50"><ShieldCheck className="mt-0.5 size-5 shrink-0 text-amber-200" />本页介绍的是公开能力和平台设计思路。本站未接入真实数字人民币系统，所有付款、余额和硬钱包均为仿真演示。</p>
           </div>
-          <div className="relative min-h-[380px] lg:min-h-full"><Image src="/images/mountain-hard-wallet.png" alt="山区老年农户使用卡片形态硬钱包的情景演示" fill priority sizes="(max-width: 1024px) 100vw, 560px" className="object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-red-950/55 via-transparent to-transparent" /><div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/25 bg-red-950/80 p-4 text-white backdrop-blur"><p className="text-lg font-black">山区、老人、弱网场景</p><p className="mt-1 text-sm leading-6 text-red-50">硬钱包让数字人民币不只存在于智能手机应用中。</p></div></div>
+          <div className="relative min-h-[380px] lg:min-h-full"><Image src={withBasePath('/images/mountain-hard-wallet.png')} alt="山区老年农户使用卡片形态硬钱包的情景演示" fill priority sizes="(max-width: 1024px) 100vw, 560px" className="object-cover" /><div className="absolute inset-0 bg-gradient-to-t from-red-950/55 via-transparent to-transparent" /><div className="absolute inset-x-5 bottom-5 rounded-2xl border border-white/25 bg-red-950/80 p-4 text-white backdrop-blur"><p className="text-lg font-black">山区、老人、弱网场景</p><p className="mt-1 text-sm leading-6 text-red-50">硬钱包让数字人民币不只存在于智能手机应用中。</p></div></div>
         </div>
       </section>
 
