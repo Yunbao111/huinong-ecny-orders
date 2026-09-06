@@ -92,6 +92,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     window.setTimeout(() => {
       setState(nextState);
       setRestored(true);
+      document.documentElement.dataset.demoReady = 'true';
     }, 0);
   }, []);
 

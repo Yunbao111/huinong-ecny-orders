@@ -26,6 +26,10 @@ async function assertNoOverflow(page, label) {
   assert(dimensions.scrollWidth <= dimensions.width + 1, `${label} horizontal overflow: ${JSON.stringify(dimensions)}`);
 }
 
+async function waitForDemoReady(page) {
+  await page.waitForFunction(() => document.documentElement.dataset.demoReady === 'true');
+}
+
 (async () => {
   const browser = await chromium.launch({ executablePath: edgePath, headless: true });
   const errors = [];
@@ -35,8 +39,10 @@ async function assertNoOverflow(page, label) {
     page.setDefaultNavigationTimeout(90000);
     await attachGuards(page, 'desktop', errors);
     await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+    await waitForDemoReady(page);
     await page.evaluate(() => localStorage.clear());
     await page.reload({ waitUntil: 'domcontentloaded' });
+    await waitForDemoReady(page);
     await assertNoOverflow(page, 'desktop home');
 
     const navHrefs = await page.locator('nav[aria-label="主导航"] a').evaluateAll((links) => links.map((link) => link.getAttribute('href')));
@@ -48,6 +54,7 @@ async function assertNoOverflow(page, label) {
 
     await page.getByRole('link', { name: '我的订单' }).click();
     await page.waitForURL('**/orders/');
+    await waitForDemoReady(page);
     await page.getByRole('button', { name: '登记交货' }).click();
     await page.getByRole('button', { name: '信息无误，确认交货' }).click();
     assert((await page.getByText('交货登记成功，订单正在等待验收员验收。').count()) === 1, 'delivery confirmation missing');
@@ -68,6 +75,7 @@ async function assertNoOverflow(page, label) {
 
     await page.getByRole('link', { name: '认识数币' }).click();
     await page.waitForURL('**/digital-rmb/');
+    await waitForDemoReady(page);
     await page.getByRole('button', { name: '验收接付款' }).click();
     assert((await page.getByText('交货后担心货款迟迟不到').count()) === 1, 'settlement education scene did not update');
     await page.getByRole('button', { name: '少暴露信息' }).click();
@@ -77,12 +85,14 @@ async function assertNoOverflow(page, label) {
 
     await page.getByRole('link', { name: '数币钱包' }).click();
     await page.waitForURL('**/wallet/');
+    await waitForDemoReady(page);
     await page.getByText('¥38,790.00').first().waitFor({ timeout: 5000 });
     if (await page.getByRole('button', { name: '重新体验硬钱包演示' }).count()) await page.getByRole('button', { name: '重新体验硬钱包演示' }).click();
     await page.getByRole('button', { name: '模拟碰一碰收款' }).click();
     assert((await page.getByText('本机已记录，等待联网核验').count()) === 1, 'offline queued state missing');
     await page.reload({ waitUntil: 'domcontentloaded' });
-    assert((await page.getByText('本机已记录，等待联网核验').count()) === 1, 'offline queued state did not persist');
+    await waitForDemoReady(page);
+    await page.getByText('本机已记录，等待联网核验').waitFor({ timeout: 5000 });
     await page.getByRole('button', { name: '模拟恢复网络并同步' }).click();
     assert((await page.getByText('仿真同步核验成功').count()) === 1, 'offline sync state missing');
     assert((await page.getByRole('button', { name: '模拟碰一碰收款' }).count()) === 0, 'duplicate offline record button remained visible');
@@ -103,6 +113,7 @@ async function assertNoOverflow(page, label) {
       await attachGuards(responsivePage, viewport.name, errors);
       for (const route of ['/', '/orders', '/digital-rmb', '/wallet']) {
         await responsivePage.goto(`${baseURL}${route === '/' ? '/' : `${route}/`}`, { waitUntil: 'domcontentloaded' });
+        await waitForDemoReady(responsivePage);
         await assertNoOverflow(responsivePage, `${viewport.name} ${route}`);
       }
       if (viewport.name === 'mobile') {
