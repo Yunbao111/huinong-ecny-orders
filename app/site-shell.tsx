@@ -76,7 +76,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                   {(Object.keys(roles) as Role[]).map((key) => (
                     <button key={key} type="button" role="menuitemradio" aria-checked={role === key} className="role-option" onClick={() => chooseRole(key)}>
                       <span className="grid size-10 place-items-center rounded-full bg-emerald-50 text-[var(--leaf)]"><UserRound className="size-5" /></span>
-                      <span className="text-left"><strong>{roles[key]}</strong><small>{key === 'farmer' ? '登记交货、查看收款' : key === 'inspector' ? '现场验收、确认合格量' : key === 'buyer' ? '查看订单履约进度' : '重试付款、重置演示'}</small></span>
+                      <span className="text-left"><strong>{roles[key]}</strong><small>{key === 'farmer' ? '登记交货、确认验收、查看收款' : key === 'inspector' ? '现场验收、确认合格量' : key === 'buyer' ? '查看订单履约进度' : '重试付款、重置演示'}</small></span>
                       {role === key && <BadgeCheck className="ml-auto size-5 text-[var(--leaf)]" />}
                     </button>
                   ))}

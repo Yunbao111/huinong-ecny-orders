@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 
 export type Role = 'farmer' | 'inspector' | 'buyer' | 'admin';
 export type FulfillmentState = 'accepted' | 'delivered' | 'inspection_passed' | 'completed';
-export type PaymentState = 'not_due' | 'processing' | 'paid' | 'retry_pending';
+export type PaymentState = 'not_due' | 'awaiting_confirm' | 'processing' | 'paid' | 'retry_pending';
 export type OfflineReceipt = 'none' | 'queued' | 'synced';
 
 type DemoState = {
@@ -22,6 +22,7 @@ type DemoContextValue = DemoState & {
   setRole: (role: Role) => void;
   recordDelivery: () => boolean;
   passInspection: () => boolean;
+  confirmAcceptance: () => boolean;
   retryPayment: () => boolean;
   recordOfflineReceipt: () => boolean;
   syncOfflineReceipt: () => boolean;
@@ -60,7 +61,7 @@ function isFulfillment(value: unknown): value is FulfillmentState {
 }
 
 function isPayment(value: unknown): value is PaymentState {
-  return value === 'not_due' || value === 'processing' || value === 'paid' || value === 'retry_pending';
+  return value === 'not_due' || value === 'awaiting_confirm' || value === 'processing' || value === 'paid' || value === 'retry_pending';
 }
 
 function isOfflineReceipt(value: unknown): value is OfflineReceipt {
@@ -130,7 +131,13 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
 
   function passInspection() {
     if (state.role !== 'inspector' || state.fulfillment !== 'delivered' || state.payment !== 'not_due') return false;
-    persistState({ ...state, fulfillment: 'inspection_passed', payment: 'processing', notice: '验收通过，平台正在调用数字人民币仿真支付网关。' });
+    persistState({ ...state, fulfillment: 'inspection_passed', payment: 'awaiting_confirm', notice: '验收通过，等待农户确认验收结果后触发数币仿真付款。' });
+    return true;
+  }
+
+  function confirmAcceptance() {
+    if (state.role !== 'farmer' || state.fulfillment !== 'inspection_passed' || state.payment !== 'awaiting_confirm') return false;
+    persistState({ ...state, payment: 'processing', notice: '农户已确认验收结果，平台正在触发数字人民币仿真支付。' });
     finishSimulatedPayment();
     return true;
   }
@@ -203,6 +210,7 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
     setRole,
     recordDelivery,
     passInspection,
+    confirmAcceptance,
     retryPayment,
     recordOfflineReceipt,
     syncOfflineReceipt,

@@ -17,7 +17,7 @@ const entryCards = [
 
 export default function HomePage() {
   const { fulfillment, payment, walletFen } = useDemo();
-  const orderStatus = fulfillment === 'accepted' ? '等待交货' : fulfillment === 'delivered' ? '等待验收' : payment === 'paid' ? '订单已完成' : '正在仿真付款';
+  const orderStatus = fulfillment === 'accepted' ? '等待交货' : fulfillment === 'delivered' ? '等待验收' : fulfillment === 'inspection_passed' && payment === 'awaiting_confirm' ? '待农户确认' : payment === 'paid' ? '订单已完成' : '正在仿真付款';
 
   return (
     <main className="mx-auto max-w-7xl px-4 pb-28 pt-4 sm:px-6 sm:pt-6 lg:px-8 lg:pb-12">
@@ -70,10 +70,39 @@ export default function HomePage() {
           <div className="p-6 sm:p-9 lg:p-11"><p className="section-kicker">山区助农场景</p><h2 className="text-3xl font-black leading-tight">没有智能手机，也能学习硬钱包收款</h2><p className="mt-4 text-lg leading-8 text-slate-600">官方资料介绍了卡片等硬钱包形态和离线交易能力。本平台用虚拟卡片演示山区无网场景：现场先记录，恢复网络后再同步核验。</p><div className="mt-5 flex flex-wrap gap-3"><SafeLink href="/wallet#hard-wallet" className="primary-link"><WifiOff className="size-5" />体验硬钱包演示</SafeLink><SafeLink href="/digital-rmb" className="plain-link"><CircleHelp className="size-5" />先了解原理</SafeLink></div></div>
         </div>
       </section>
+
+      <section className="mt-10 rounded-[28px] bg-white ring-1 ring-emerald-950/8">
+        <div className="p-6 sm:p-9 lg:p-11">
+          <p className="section-kicker">产业链视角</p>
+          <h2 className="text-3xl font-black leading-tight">一个订单农业平台，站在整条产业链上</h2>
+          <p className="mt-4 text-lg leading-8 text-slate-600">农产品从田间到餐桌要经过多个环节。本平台聚焦「收购 / 验收」这一环，用数币结算 + 存证，把农户最痛的一步变成最稳的一步。</p>
+          <div className="mt-7 flex flex-wrap items-center gap-2">
+            <ChainStep label="农资供应" detail="种子化肥" />
+            <ChainArrow />
+            <ChainStep label="种植" detail="农户田间" />
+            <ChainArrow />
+            <ChainStep label="收购 / 验收" detail="数币结算 + 存证" highlight />
+            <ChainArrow />
+            <ChainStep label="加工" detail="分选仓储" />
+            <ChainArrow />
+            <ChainStep label="流通" detail="批发物流" />
+            <ChainArrow />
+            <ChainStep label="零售" detail="商超餐桌" />
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
 
 function HomeFact({ label, value }: { label: string; value: string }) {
   return <div className="rounded-2xl bg-slate-50 p-4"><p className="text-sm font-semibold text-slate-500">{label}</p><p className="mt-1 text-lg font-black text-slate-900">{value}</p></div>;
+}
+
+function ChainStep({ label, detail, highlight }: { label: string; detail: string; highlight?: boolean }) {
+  return <div className={`rounded-2xl border px-4 py-3 text-center ${highlight ? 'border-amber-300 bg-amber-50' : 'border-emerald-950/10 bg-slate-50'}`}><p className={`font-black ${highlight ? 'text-emerald-800' : 'text-slate-800'}`}>{label}</p><p className="mt-0.5 text-xs font-semibold text-slate-500">{detail}</p></div>;
+}
+
+function ChainArrow() {
+  return <ArrowRight className="size-5 shrink-0 text-emerald-400" />;
 }

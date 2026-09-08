@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { ArrowRight, Banknote, BookOpenCheck, Check, Fingerprint, Landmark, Link2, Network, ShieldCheck, Smartphone, WalletCards, WifiOff } from 'lucide-react';
+import { ArrowDown, ArrowRight, Banknote, BookOpenCheck, Check, Clock3, Fingerprint, HandCoins, Landmark, Link2, Network, ShieldCheck, Smartphone, Sprout, WalletCards, WifiOff, Zap } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -89,6 +89,39 @@ export default function DigitalRmbPage() {
           </div>
         </section>
 
+        <section className="mt-10 rounded-[26px] border border-emerald-950/10 bg-white p-6 ring-1 ring-emerald-950/8 sm:p-8">
+          <div className="max-w-3xl"><p className="section-kicker">怎么接入</p><h2 className="text-3xl font-black sm:text-4xl">从“验收通过”到“农户钱包到账”，一共四层</h2><p className="mt-4 text-lg leading-8 text-slate-600">真实接入必须通过央行指定运营机构完成。下图展示平台在其中的位置，以及“验收通过”这个事件如何触发数币条件支付、秒级到账。</p></div>
+          <div className="mt-7 max-w-3xl space-y-3">
+            <ArchLayer number="1" title="农户 · 软钱包 / 硬钱包" detail="接收货款的一端。硬钱包采用卡片形态，无网也能“碰一碰”收款。" />
+            <ArchArrow label="支付即结算 · 货款秒级划入" />
+            <ArchLayer number="2" title="平台 · 订单 / 验收 / 存证 / 条件支付规则" detail="本平台所在层：冻结单价、记录验收、生成存证；验收通过且农户确认后触发条件支付。" accent />
+            <ArchArrow label="调用数币接口 · 提交条件支付" />
+            <ArchLayer number="3" title="指定运营机构 · 数币钱包 / 智能合约" detail="受理条件支付请求，执行智能合约，把货款划入农户数币钱包。" />
+            <ArchArrow label="登记 · 清算" />
+            <ArchLayer number="4" title="中国人民银行 · 发行与登记结算" detail="数字人民币的法定货币地位与最终结算。" />
+          </div>
+          <p className="mt-5 max-w-3xl text-sm leading-6 text-slate-500">说明：本图为示意结构，本站未接入真实系统；实际以运营机构提供的能力与合规流程为准。</p>
+        </section>
+
+        <section className="mt-8 grid gap-4 lg:grid-cols-2">
+          <Card className="rounded-[24px] border-0 bg-white ring-1 ring-emerald-950/8">
+            <CardHeader><div className="flex items-start justify-between"><span className="grid size-11 place-items-center rounded-2xl bg-red-50 text-red-700"><Clock3 className="size-6" /></span><Badge className="h-8 bg-slate-100 text-slate-600">传统结算</Badge></div><CardTitle className="mt-3 text-xl font-black">为什么过去总是“慢”</CardTitle></CardHeader>
+            <CardContent><p className="text-base leading-7 text-slate-600">验收后，采购方内部审批、手工打款，通常 T+1 甚至 T+N 才到账；农户只能等，也催不动。</p></CardContent>
+          </Card>
+          <Card className="rounded-[24px] border-0 bg-white ring-1 ring-emerald-950/8">
+            <CardHeader><div className="flex items-start justify-between"><span className="grid size-11 place-items-center rounded-2xl bg-emerald-100 text-[var(--leaf)]"><Zap className="size-6" /></span><Badge className="h-8 bg-emerald-100 text-emerald-800">数币条件支付</Badge></div><CardTitle className="mt-3 text-xl font-black">为什么现在能“秒到”</CardTitle></CardHeader>
+            <CardContent><p className="text-base leading-7 text-slate-600">验收通过 + 农户确认后，合约自动执行，货款秒级划入农户钱包，不取决于采购方何时打款。</p></CardContent>
+          </Card>
+        </section>
+
+        <section className="mt-8">
+          <div className="max-w-3xl"><p className="section-kicker">延伸价值</p><h2 className="text-3xl font-black sm:text-4xl">凭可信数据，还能做两件事</h2></div>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <ExtensionCard icon={HandCoins} title="凭订单融资，先有钱种地" text="有了可信订单存证，金融机构能“看单放款”，数币定向支付农资，解决开春缺钱买种子化肥的难题。" />
+            <ExtensionCard icon={Sprout} title="补贴直达，中间不截留" text="政府涉农补贴、农机补贴通过数币定向直达农户钱包，专款专用，从源头避免截留挪用。" />
+          </div>
+        </section>
+
         <section className="mb-2 grid gap-5 rounded-[26px] border border-red-100 bg-red-50 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
           <div><p className="text-sm font-black tracking-[.12em] text-red-700">接着亲手试一试</p><h2 className="mt-2 text-2xl font-black">去钱包页体验“虚拟硬钱包离线收款”</h2><p className="mt-3 text-base leading-7 text-slate-600">你会看到离线记录为什么不能直接等同于最终到账，以及恢复网络后为什么还要同步核验。</p></div>
           <SafeLink href="/wallet#hard-wallet" className="primary-link bg-red-700 hover:bg-red-600">进入硬钱包演示 <ArrowRight /></SafeLink>
@@ -118,4 +151,16 @@ function StoryBlock({ icon: Icon, label, title, text }: { icon: typeof Banknote;
 
 function BenefitCard({ number, icon: Icon, title, text, fit }: { number: string; icon: typeof WalletCards; title: string; text: string; fit: string }) {
   return <Card className="rounded-[24px] border-0 bg-white ring-1 ring-emerald-950/8"><CardHeader><div className="flex items-start justify-between"><span className="grid size-12 place-items-center rounded-2xl bg-red-50 text-red-700"><Icon className="size-6" /></span><span className="text-3xl font-black text-slate-100">{number}</span></div><CardTitle className="mt-4 text-2xl font-black">{title}</CardTitle><CardDescription className="mt-3 text-base leading-7 text-slate-600">{text}</CardDescription></CardHeader><CardContent><p className="rounded-2xl bg-emerald-50 p-4 text-base font-bold leading-7 text-emerald-900">{fit}</p></CardContent></Card>;
+}
+
+function ArchLayer({ number, title, detail, accent }: { number: string; title: string; detail: string; accent?: boolean }) {
+  return <div className={`flex items-start gap-4 rounded-2xl border p-4 ${accent ? 'border-amber-300 bg-amber-50' : 'border-emerald-950/10 bg-slate-50'}`}><span className={`grid size-9 shrink-0 place-items-center rounded-xl text-base font-black ${accent ? 'bg-amber-300 text-emerald-950' : 'bg-emerald-100 text-[var(--leaf)]'}`}>{number}</span><div><p className="font-black">{title}</p><p className="mt-1 text-base leading-7 text-slate-600">{detail}</p></div></div>;
+}
+
+function ArchArrow({ label }: { label: string }) {
+  return <div className="flex items-center gap-2 py-0.5 pl-5 text-sm font-bold text-slate-500"><ArrowDown className="size-4 text-emerald-600" />{label}</div>;
+}
+
+function ExtensionCard({ icon: Icon, title, text }: { icon: typeof HandCoins; title: string; text: string }) {
+  return <Card className="rounded-[24px] border-0 bg-white ring-1 ring-emerald-950/8"><CardHeader><span className="grid size-11 place-items-center rounded-2xl bg-emerald-100 text-[var(--leaf)]"><Icon className="size-6" /></span><CardTitle className="mt-4 text-xl font-black">{title}</CardTitle><CardDescription className="mt-3 text-base leading-7 text-slate-600">{text}</CardDescription></CardHeader></Card>;
 }
